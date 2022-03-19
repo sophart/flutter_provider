@@ -1,6 +1,7 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'models/dog.dart';
 
 void main() => runApp(ProviderDemoApp());
 
@@ -9,98 +10,61 @@ class ProviderDemoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  int counter = 0;
-
-  void increment() {
-    setState(() {
-      counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("My Homepage"),
-            CounterA(counter: counter, increment: increment),
-            Middle(counter: counter),
-          ],
-        ),
+    return Provider<Dog>(
+      create: (context) => Dog(name: "Kiki", breed: "Bull"),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: HomePage(),
       ),
     );
   }
 }
 
-class CounterA extends StatelessWidget {
-  final int counter;
-  final void Function() increment;
+class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
 
-  const CounterA({Key? key, required this.counter, required this.increment})
-      : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text("-name: ${Provider.of<Dog>(context).name}"),
+          BreedAndAge(),
+        ],
+      ),
+    );
+  }
+}
+
+class BreedAndAge extends StatelessWidget {
+  const BreedAndAge({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          Text("-breed: ${Provider.of<Dog>(context).breed}"),
+          Age(),
+        ],
+      ),
+    );
+  }
+}
+
+class Age extends StatelessWidget {
+  const Age({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text('$counter'),
-        ElevatedButton(onPressed: increment, child: Text("Click Me"))
+        Text("-age: ${Provider.of<Dog>(context).age}"),
+        ElevatedButton(
+            onPressed: () => Provider.of<Dog>(context, listen: false).grow(),
+            child: Text("Click me"))
       ],
     );
-  }
-}
-
-class Middle extends StatelessWidget {
-  final int counter;
-
-  const Middle({Key? key, required this.counter}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      CounterB(counter: counter),
-      SizedBox(
-        width: 6,
-      ),
-      Sibling(),
-    ]);
-  }
-}
-
-class CounterB extends StatelessWidget {
-  final int counter;
-
-  const CounterB({Key? key, required this.counter}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Text('$counter');
-  }
-}
-
-class Sibling extends StatelessWidget {
-  const Sibling({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Text("Sibling");
   }
 }

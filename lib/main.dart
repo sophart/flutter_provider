@@ -31,12 +31,14 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text("-name: ${Provider.of<Dog>(context, listen: false).name}"),
-          BreedAndAge(),
-        ],
+      body: Consumer<Dog>(
+        builder: (BuildContext context, Dog dog, Widget? child) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [Text("-name: ${dog.name}"), child!, BreedAndAge()],
+          );
+        },
+        child: Text("Hello World"),
       ),
     );
   }
@@ -46,11 +48,15 @@ class BreedAndAge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        children: [
-          Text("-breed: ${Provider.of<Dog>(context, listen: false).breed}"),
-          Age(),
-        ],
+      child: Consumer<Dog>(
+        builder: ((_, Dog dog, __) {
+          return Column(
+            children: [
+              Text("-breed: ${dog.breed}"),
+              Age(),
+            ],
+          );
+        }),
       ),
     );
   }
@@ -59,13 +65,13 @@ class BreedAndAge extends StatelessWidget {
 class Age extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text("-age: ${Provider.of<Dog>(context).age}"),
-        ElevatedButton(
-            onPressed: () => Provider.of<Dog>(context, listen: false).grow(),
-            child: Text("Click me"))
-      ],
-    );
+    return Consumer(builder: (_, Dog dog, __) {
+      return Column(
+        children: [
+          Text("-age: ${dog.age}"),
+          ElevatedButton(onPressed: () => dog.grow(), child: Text("Click me"))
+        ],
+      );
+    });
   }
 }

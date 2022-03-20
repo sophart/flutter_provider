@@ -26,7 +26,15 @@ class ProviderDemoApp extends StatelessWidget {
               final babies = Baby(age: dogAge).getBabies();
               return babies;
             },
-            initialData: 0)
+            initialData: 0),
+        StreamProvider<String>(
+            create: (context) {
+              final int dogAge = context.read<Dog>().age;
+              final babies = Baby(age: dogAge * 2);
+
+              return babies.bark();
+            },
+            initialData: "Bark 0 time")
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -79,6 +87,7 @@ class Age extends StatelessWidget {
       children: [
         Text("-age: ${context.watch<Dog>().age}"),
         Text("-number of baby: ${context.watch<int>()}"),
+        Text("-bark: ${context.watch<String>()}"),
         // Text("-age: ${context.select<Dog, int>((Dog dog) => dog.age)}"),
         ElevatedButton(
             onPressed: () => context.read<Dog>().grow(),

@@ -24,28 +24,33 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<Foo>(
       create: (_) => Foo(),
-      child: Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "${context.watch<Foo>().value}",
-                style: TextStyle(
-                  fontSize: 40.0,
-                  color: Colors.purple,
-                  fontWeight: FontWeight.w900,
+      // Fix the NotFound exception by using builder instead
+      // the cause of the problem is bacause we try to read
+      // the provider immediately
+      builder: (context, _) {
+        return Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "${context.watch<Foo>().value}",
+                  style: TextStyle(
+                    fontSize: 40.0,
+                    color: Colors.purple,
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
-              ),
-              ElevatedButton(
-                onPressed: () => context.read<Foo>().switchValue(),
-                child:
-                    Text(context.watch<Foo>().value == 'Foo' ? 'Bar' : 'Foo'),
-              ),
-            ],
+                ElevatedButton(
+                  onPressed: () => context.read<Foo>().switchValue(),
+                  child:
+                      Text(context.watch<Foo>().value == 'Foo' ? 'Bar' : 'Foo'),
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

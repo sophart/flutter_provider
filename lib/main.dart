@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text("-name: ${Provider.of<Dog>(context, listen: false).name}"),
+          Text("-name: ${context.read<Dog>().name}"),
           BreedAndAge(),
         ],
       ),
@@ -48,7 +48,7 @@ class BreedAndAge extends StatelessWidget {
     return Center(
       child: Column(
         children: [
-          Text("-breed: ${Provider.of<Dog>(context, listen: false).breed}"),
+          Text("-breed: ${context.read<Dog>().breed}"),
           Age(),
         ],
       ),
@@ -61,9 +61,10 @@ class Age extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text("-age: ${Provider.of<Dog>(context).age}"),
+        Text("-age: ${context.watch<Dog>().age}"),
+        // Text("-age: ${context.select<Dog, int>((Dog dog) => dog.age)}"),
         ElevatedButton(
-            onPressed: () => Provider.of<Dog>(context, listen: false).grow(),
+            onPressed: () => context.read<Dog>().grow(),
             child: Text("Click me"))
       ],
     );

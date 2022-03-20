@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:provider_demo/models/baby.dart';
 
 import 'models/dog.dart';
 
@@ -10,8 +11,23 @@ class ProviderDemoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<Dog>(
-      create: (context) => Dog(name: "Lulu 2", breed: "Unknown", age: 5),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<Dog>(
+          create: (context) => Dog(
+            name: "Lulu 2",
+            breed: "Unknown",
+            age: 5,
+          ),
+        ),
+        FutureProvider<int>(
+            create: (context) {
+              final int dogAge = context.read<Dog>().age;
+              final babies = Baby(age: dogAge).getBabies();
+              return babies;
+            },
+            initialData: 0)
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: HomePage(),
@@ -62,6 +78,7 @@ class Age extends StatelessWidget {
     return Column(
       children: [
         Text("-age: ${context.watch<Dog>().age}"),
+        Text("-number of baby: ${context.watch<int>()}"),
         // Text("-age: ${context.select<Dog, int>((Dog dog) => dog.age)}"),
         ElevatedButton(
             onPressed: () => context.read<Dog>().grow(),

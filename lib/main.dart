@@ -10,18 +10,36 @@ class ProviderDemoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Provider<Dog>(
-      create: (context) => Dog(name: "Kiki", breed: "Bull"),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: HomePage(),
-      ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: HomePage(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  Dog dog = Dog(name: "Lulu", breed: "unknow");
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    dog.addListener(() => print("${dog.age} from change notifier."));
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    dog.removeListener(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +47,8 @@ class HomePage extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text("-name: ${Provider.of<Dog>(context).name}"),
-          BreedAndAge(),
+          Text("-name: ${dog.name}"),
+          BreedAndAge(dog: dog),
         ],
       ),
     );
@@ -38,15 +56,16 @@ class HomePage extends StatelessWidget {
 }
 
 class BreedAndAge extends StatelessWidget {
-  const BreedAndAge({Key? key}) : super(key: key);
+  final Dog dog;
+  const BreedAndAge({Key? key, required this.dog}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
         children: [
-          Text("-breed: ${Provider.of<Dog>(context).breed}"),
-          Age(),
+          Text("-breed: ${dog.breed}"),
+          Age(dog: dog),
         ],
       ),
     );
@@ -54,16 +73,15 @@ class BreedAndAge extends StatelessWidget {
 }
 
 class Age extends StatelessWidget {
-  const Age({Key? key}) : super(key: key);
+  final Dog dog;
+  const Age({Key? key, required this.dog}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text("-age: ${Provider.of<Dog>(context).age}"),
-        ElevatedButton(
-            onPressed: () => Provider.of<Dog>(context, listen: false).grow(),
-            child: Text("Click me"))
+        Text("-age: ${dog.age}"),
+        ElevatedButton(onPressed: () => dog.grow(), child: Text("Click me"))
       ],
     );
   }
